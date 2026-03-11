@@ -76,10 +76,13 @@ def normalize_text(text):
 # MLflow tracking configuration
 dagshub_token = os.getenv("CAPSTONE_TEST")
 if dagshub_token:
+    os.environ.setdefault("DAGSHUB_USER_TOKEN", dagshub_token)
     os.environ["MLFLOW_TRACKING_USERNAME"] = dagshub_token
     os.environ["MLFLOW_TRACKING_PASSWORD"] = dagshub_token
     mlflow.set_tracking_uri('https://dagshub.com/Shalha-Mucha18/Capstone-Project-2026.mlflow')
-    dagshub.init(repo_owner='Shalha-Mucha18', repo_name='Capstone-Project-2026', mlflow=True)
+    # Avoid interactive auth prompts in CI/tests.
+    if not os.getenv("CI"):
+        dagshub.init(repo_owner='Shalha-Mucha18', repo_name='Capstone-Project-2026', mlflow=True)
 else:
     mlflow.set_tracking_uri(f"file://{ROOT_DIR / 'mlruns'}")
 
