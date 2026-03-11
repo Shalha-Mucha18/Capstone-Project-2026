@@ -72,8 +72,11 @@ def apply_bow(train_data: pd.DataFrame, test_data: pd.DataFrame, max_features: i
         test_df['label'] = y_test
         logging.info("BOW applied successfully.")
 
-        pickle.dump(vectorizer, open('models/vectorizer.pkl', 'wb'))
-        logging.info('Vectorizer saved to models/vectorizer.pkl')
+        model_dir = PROJECT_ROOT / 'models'
+        model_dir.mkdir(parents=True, exist_ok=True)
+        vectorizer_path = model_dir / 'vectorizer.pkl'
+        pickle.dump(vectorizer, open(vectorizer_path, 'wb'))
+        logging.info('Vectorizer saved to %s', vectorizer_path)
         return train_df, test_df
     except Exception as e:
         logging.error('Error applying BOW: %s', e)
