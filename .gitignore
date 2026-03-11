@@ -84,8 +84,7 @@ docs/_build/
 site/
 
 # Data science artifacts
-data/
-models/
+
 reports/
 
 # Keep directory placeholders
