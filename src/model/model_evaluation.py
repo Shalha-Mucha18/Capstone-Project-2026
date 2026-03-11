@@ -20,14 +20,31 @@ from src.logger import logging
 
 MODEL_ARTIFACT_PATH = "model"
 
-
-
-# Below code block is for  local use
+# Below code block is for production use
 # -------------------------------------------------------------------------------------
+# Set up DagsHub credentials for MLflow tracking
+dagshub_token = os.getenv("CAPSTONE_TEST")
+if not dagshub_token:
+    raise EnvironmentError("CAPSTONE_TEST environment variable is not set")
 
-mlflow.set_tracking_uri('https://dagshub.com/Shalha-Mucha18/Capstone-Project-2026.mlflow')
-dagshub.init(repo_owner='Shalha-Mucha18', repo_name='Capstone-Project-2026', mlflow=True)
-# -------------------------------------------------------------------------------------
+os.environ["MLFLOW_TRACKING_USERNAME"] = dagshub_token
+os.environ["MLFLOW_TRACKING_PASSWORD"] = dagshub_token
+
+dagshub_url = "https://dagshub.com"
+repo_owner = "Shalha-Mucha18"
+repo_name = "Capstone-Project-2026"
+
+# Set up MLflow tracking URI
+mlflow.set_tracking_uri(f'{dagshub_url}/{repo_owner}/{repo_name}.mlflow')
+
+
+
+# # Below code block is for  local use
+# # -------------------------------------------------------------------------------------
+
+# mlflow.set_tracking_uri('https://dagshub.com/Shalha-Mucha18/Capstone-Project-2026.mlflow')
+# dagshub.init(repo_owner='Shalha-Mucha18', repo_name='Capstone-Project-2026', mlflow=True)
+# # -------------------------------------------------------------------------------------
 
 
 def load_model(file_path: str):
