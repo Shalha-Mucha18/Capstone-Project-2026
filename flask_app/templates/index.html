@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Customer behaviour analysis</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Manrope:wght@400;500;600;700&display=swap');
+
+        :root {
+            --ink: #1f1d2b;
+            --muted: #6b6b7b;
+            --cream: #f6efe7;
+            --peach: #f6d7c1;
+            --sage: #cfe1d6;
+            --teal: #2a6f6d;
+            --gold: #d8a45a;
+            --card: rgba(255, 255, 255, 0.82);
+            --positive-bg: #e8f4ed;
+            --positive-border: #98c7ad;
+            --negative-bg: #fdecec;
+            --negative-border: #e7a6a6;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            font-family: "Manrope", "Segoe UI", sans-serif;
+            color: var(--ink);
+            background:
+                radial-gradient(600px 300px at 15% 10%, rgba(246, 215, 193, 0.55), transparent 65%),
+                radial-gradient(700px 450px at 90% 5%, rgba(207, 225, 214, 0.7), transparent 60%),
+                linear-gradient(145deg, #f7f2ed, #f3f7f5 60%, #fff5ea);
+            display: grid;
+            place-items: center;
+            padding: 36px 20px 48px;
+        }
+
+        .frame {
+            width: min(760px, 100%);
+            position: relative;
+        }
+
+        .frame::before,
+        .frame::after {
+            content: "";
+            position: absolute;
+            border-radius: 999px;
+            filter: blur(0.5px);
+            opacity: 0.5;
+            z-index: -1;
+        }
+
+        .frame::before {
+            width: 220px;
+            height: 220px;
+            background: rgba(216, 164, 90, 0.25);
+            top: -60px;
+            right: -50px;
+        }
+
+        .frame::after {
+            width: 180px;
+            height: 180px;
+            background: rgba(42, 111, 109, 0.2);
+            bottom: -60px;
+            left: -40px;
+        }
+
+        .card {
+            background: var(--card);
+            border: 1px solid rgba(31, 29, 43, 0.08);
+            border-radius: 24px;
+            padding: 30px 32px 34px;
+            box-shadow: 0 26px 60px rgba(31, 29, 43, 0.12);
+            backdrop-filter: blur(8px);
+            animation: float-in 0.8s ease-out;
+        }
+
+        @keyframes float-in {
+            from {
+                opacity: 0;
+                transform: translateY(14px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        h1 {
+            font-family: "DM Serif Display", "Times New Roman", serif;
+            font-size: clamp(28px, 3.2vw, 38px);
+            margin: 0 0 10px;
+            letter-spacing: 0.4px;
+        }
+
+        .subtitle {
+            margin: 0 0 26px;
+            color: var(--muted);
+            font-size: 15px;
+            line-height: 1.55;
+        }
+
+        label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        textarea {
+            width: 100%;
+            min-height: 160px;
+            padding: 16px;
+            border: 1px solid rgba(31, 29, 43, 0.15);
+            border-radius: 14px;
+            background: rgba(255, 255, 255, 0.9);
+            font-family: inherit;
+            font-size: 16px;
+            resize: vertical;
+            transition: border 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        textarea:focus {
+            outline: none;
+            border-color: rgba(42, 111, 109, 0.5);
+            box-shadow: 0 0 0 3px rgba(42, 111, 109, 0.15);
+        }
+
+        .actions {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            margin-top: 18px;
+            flex-wrap: wrap;
+        }
+
+        button {
+            background: linear-gradient(135deg, #2a6f6d, #3b8d82);
+            color: #fff;
+            border: none;
+            padding: 12px 26px;
+            border-radius: 999px;
+            font-weight: 600;
+            font-size: 15px;
+            letter-spacing: 0.3px;
+            cursor: pointer;
+            box-shadow: 0 12px 22px rgba(42, 111, 109, 0.25);
+            transition: transform 0.15s ease, box-shadow 0.15s ease;
+        }
+
+        button:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 16px 24px rgba(42, 111, 109, 0.3);
+        }
+
+        .hint {
+            color: var(--muted);
+            font-size: 13px;
+        }
+
+        .result {
+            margin-top: 22px;
+            padding: 14px 16px;
+            border-radius: 14px;
+            font-size: 18px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .positive {
+            background: var(--positive-bg);
+            border: 1px solid var(--positive-border);
+            color: #1b4b33;
+        }
+
+        .negative {
+            background: var(--negative-bg);
+            border: 1px solid var(--negative-border);
+            color: #7c1f1f;
+        }
+
+        .stamp {
+            margin-top: 20px;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 12px;
+            border-radius: 999px;
+            border: 1px dashed rgba(31, 29, 43, 0.3);
+            font-size: 12px;
+            letter-spacing: 0.4px;
+            text-transform: uppercase;
+            color: rgba(31, 29, 43, 0.6);
+        }
+
+        @media (max-width: 540px) {
+            .card {
+                padding: 24px 20px 28px;
+            }
+            .actions {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            button {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <main class="frame">
+        <section class="card">
+            <h1>Customer behaviour analysis</h1>
+            <p class="subtitle">Turn short customer messages into a quick sentiment signal for better decisions.</p>
+
+            <form action="/predict" method="POST">
+                <label for="text">Customer text</label>
+                <textarea id="text" name="text" placeholder="Paste a note, review, or chat snippet...">{{ text_value or "" }}</textarea>
+                <div class="actions">
+                    <button type="submit">Analyze</button>
+                    <span class="hint">Tip: Longer messages usually produce more reliable results.</span>
+                </div>
+            </form>
+
+            {% if error %}
+                <div class="result negative">{{ error }}</div>
+            {% endif %}
+
+            {% if result is not none %}
+                <div class="result {% if result == 1 %}positive{% else %}negative{% endif %}">
+                    {% if result == 1 %}
+                        <span>Positive customer sentiment</span>
+                    {% else %}
+                        <span>Negative customer sentiment</span>
+                    {% endif %}
+                </div>
+            {% endif %}
+
+            <div class="stamp">aesthetic mode</div>
+        </section>
+    </main>
+</body>
+</html>
