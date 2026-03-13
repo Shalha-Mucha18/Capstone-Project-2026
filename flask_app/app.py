@@ -20,6 +20,8 @@ warnings.filterwarnings("ignore")
 BASE_DIR = Path(__file__).resolve().parent
 ROOT_DIR = BASE_DIR.parent
 MODEL_DIR = ROOT_DIR / "models"
+if not MODEL_DIR.exists():
+    MODEL_DIR = BASE_DIR / "models"
 
 
 def lematization(text):
@@ -85,6 +87,13 @@ if dagshub_token:
         dagshub.init(repo_owner='Shalha-Mucha18', repo_name='Capstone-Project-2026', mlflow=True)
 else:
     mlflow.set_tracking_uri(f"file://{ROOT_DIR / 'mlruns'}")
+
+# # Below code block is for  local use
+# # -------------------------------------------------------------------------------------
+
+# mlflow.set_tracking_uri('https://dagshub.com/Shalha-Mucha18/Capstone-Project-2026.mlflow')
+# dagshub.init(repo_owner='Shalha-Mucha18', repo_name='Capstone-Project-2026', mlflow=True)
+
 
 
 
@@ -189,4 +198,4 @@ def metrics():
     return  generate_latest(registry), 200, {"Content-Type": CONTENT_TYPE_LATEST}
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(debug=True, host="0.0.0.0")
